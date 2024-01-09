@@ -51,8 +51,14 @@ void interpret(cpu_t *cpu, int *program)
                 cpu->reg_x = cpu->reg_a;
                 set_flags(cpu, cpu->reg_x);
                 break;
+            case 0xE8:
+                cpu->reg_x = cpu->reg_x + 1;
+                set_flags(cpu, cpu->reg_x);
+                break;
             case 0x00:
-                return;                
+                return;
+            default:
+                return;              
         }
     }
 }
