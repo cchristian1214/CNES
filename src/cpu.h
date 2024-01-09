@@ -3,6 +3,7 @@
 struct cpu
 {
     uint8_t reg_a;
+    uint8_t reg_x;
     uint8_t reg_status;
     uint16_t program_counter;
 };
