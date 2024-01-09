@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "stdbool.h": "c",
+        "cpu.h": "c"
+    },
+    "cmake.configureOnOpen": true,
+    "makefile.makePath": "mingw32-make",
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\Users\\darkm\\Documents\\Projects\\NESEmulator",
+            "binaryPath": "c:\\Users\\darkm\\Documents\\Projects\\NESEmulator\\cpu_test",
+            "binaryArgs": []
+        }
+    ]
+}
