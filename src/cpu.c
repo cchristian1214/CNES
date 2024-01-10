@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "cpu.h"
 
 
@@ -17,6 +18,46 @@ void free_cpu(cpu_t *cpu)
     free(cpu);
 }
 
+uint8_t mem_read(cpu_t *cpu, uint16_t address)
+{
+    return cpu->memory[address];
+}
+
+void mem_write(cpu_t *cpu, uint16_t address, uint8_t data)
+{
+    cpu->memory[address] = data;
+}
+
+uint16_t mem_read_16(cpu_t *cpu, uint16_t address)
+{
+    uint16_t low_byte = mem_read(cpu, address);
+    uint16_t high_byte = mem_read(cpu, address + 8);
+    return (high_byte << 8) | low_byte;
+
+}
+
+void mem_write_16(cpu_t *cpu, uint16_t address, uint16_t data)
+{
+    uint8_t low_byte = data & 0xFF;
+    uint8_t high_byte = data >> 8;
+    mem_write(cpu, address, low_byte);
+    mem_write(cpu, address + 8, high_byte);
+}
+
+void reset(cpu_t *cpu)
+{
+    cpu->reg_a = 0;
+    cpu->reg_x = 0;
+    cpu->reg_status = 0;
+    cpu->program_counter = mem_read_16(cpu, 0xFFFC);
+}
+
+void load(cpu_t *cpu, int *program, int program_size)
+{
+    memcpy(&(cpu->memory[0x8000]), program, program_size * sizeof(int));
+    mem_write_16(cpu, 0xFFFC, 0x8000);
+}
+
 void set_flags(cpu_t *cpu, uint8_t result)
 {
     if(result == 0)
@@ -30,20 +71,18 @@ void set_flags(cpu_t *cpu, uint8_t result)
         cpu->reg_status = cpu->reg_status & 0b01111111;
 }
 
-void interpret(cpu_t *cpu, int *program)
+void run(cpu_t *cpu)
 {
-    cpu->program_counter = 0;
-
     while(true)
     {
-        int opcode = program[cpu->program_counter];
-        cpu->program_counter += 1;
+        int opcode = mem_read(cpu, cpu->program_counter);
+        cpu->program_counter += 4;
 
         switch(opcode)
         {
             case 0xA9:
-                int param = program[cpu->program_counter];
-                cpu->program_counter += 1;
+                int param = mem_read(cpu, cpu->program_counter);
+                cpu->program_counter += 4;
                 cpu->reg_a = param;
                 set_flags(cpu, cpu->reg_a);
                 break;
@@ -61,4 +100,11 @@ void interpret(cpu_t *cpu, int *program)
                 return;              
         }
     }
+}
+
+void load_and_run(cpu_t *cpu, int *program, int program_size)
+{
+    load(cpu, program, program_size);
+    reset(cpu);
+    run(cpu);
 }
