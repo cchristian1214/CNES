@@ -31,17 +31,17 @@ void mem_write(cpu_t *cpu, uint16_t address, uint8_t data)
 uint16_t mem_read_16(cpu_t *cpu, uint16_t address)
 {
     uint16_t low_byte = mem_read(cpu, address);
-    uint16_t high_byte = mem_read(cpu, address + 8);
+    uint16_t high_byte = mem_read(cpu, address + 1);
     return (high_byte << 8) | low_byte;
 
 }
 
 void mem_write_16(cpu_t *cpu, uint16_t address, uint16_t data)
 {
-    uint8_t low_byte = data & 0xFF;
-    uint8_t high_byte = data >> 8;
+    uint8_t low_byte = (data & 0xFF);
+    uint8_t high_byte = (data >> 8);
     mem_write(cpu, address, low_byte);
-    mem_write(cpu, address + 8, high_byte);
+    mem_write(cpu, address + 1, high_byte);
 }
 
 void reset(cpu_t *cpu)
@@ -54,7 +54,7 @@ void reset(cpu_t *cpu)
 
 void load(cpu_t *cpu, int *program, int program_size)
 {
-    memcpy(&(cpu->memory[0x8000]), program, program_size * sizeof(int));
+    memcpy(&cpu->memory[0x8000], program, program_size * sizeof(int));
     mem_write_16(cpu, 0xFFFC, 0x8000);
 }
 
@@ -76,13 +76,13 @@ void run(cpu_t *cpu)
     while(true)
     {
         int opcode = mem_read(cpu, cpu->program_counter);
-        cpu->program_counter += 4;
+        cpu->program_counter += 1;
 
         switch(opcode)
         {
             case 0xA9:
                 int param = mem_read(cpu, cpu->program_counter);
-                cpu->program_counter += 4;
+                cpu->program_counter += 1;
                 cpu->reg_a = param;
                 set_flags(cpu, cpu->reg_a);
                 break;

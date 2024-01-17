@@ -7,7 +7,7 @@ struct cpu
     uint8_t reg_status;
     uint16_t program_counter;
     // Array representing 64KB of memory
-    uint8_t memory[0xFFFF];
+    int memory[0xFFFF];
 };
 
 typedef struct cpu cpu_t;

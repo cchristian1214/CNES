@@ -10,4 +10,4 @@ cpu: cpu.o
 	gcc -c $(CFLAGS) $< -o $@
 
 clean:
-	rm -f src/*.o cpu_test cpu
+	rm -f src/*.o *.o cpu_test
