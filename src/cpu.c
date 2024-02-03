@@ -6,7 +6,7 @@
 
 cpu_t* init_cpu()
 {
-    cpu_t *new_cpu = malloc(sizeof(cpu_t));
+    cpu_t *new_cpu = (cpu_t *)calloc(1, sizeof(cpu_t));
     new_cpu->reg_a = 0;
     new_cpu->reg_status = 0;
     new_cpu->program_counter = 0;
