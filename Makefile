@@ -1,13 +1,10 @@
 CFLAG := -std=c99 -D_DEFAULT_SOURCE -Wall -g
 
-cpu_test: src/cpu.o src/cpu_test.o
-	gcc $(CFLAGS) -Werror -o $@ $^
+cpu_test: cpu.o cpu_test.o
+	$(CC) -Wall -o cpu_test cpu.o cpu_test.o
 
-cpu: cpu.o
-	gcc $(CFLAGS) -o $@ $^
-
-%.o : %.c
-	gcc -c $(CFLAGS) $< -o $@
+cpu.o: cpu.h cpu.c
+cpu_test.o: cpu.h cpu_test.c
 
 clean:
-	rm -f src/*.o *.o cpu_test
+	del -fR cpu_test.exe *.o
