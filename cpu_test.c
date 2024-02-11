@@ -12,9 +12,21 @@ void test_0xa9_lda_immediate_load_data()
     program[1] = 0x05;
     program[2] = 0x00;
     load_and_run(cpu, program, 3);
-    assert(cpu->reg_a == 0x05);
-    assert((cpu->reg_status & 0b00000010) == 0);
-    assert((cpu->reg_status & 0b10000000) == 0);
+    if(cpu->reg_a != 0x05)
+    {
+        fprintf(stderr, "0xa9_lda_immediate_load_data failure: reg_a not correct");
+        exit(1);
+    }
+    if((cpu->reg_status & 0b00000010) != 0)
+    {
+        fprintf(stderr, "0xa9_lda_immediate_load_data failure: zero flag not correct");
+        exit(1);
+    }
+    if((cpu->reg_status & 0b10000000) != 0)
+    {
+        fprintf(stderr, "0xa9_lda_immediate_load_data failure: negative flag not correct");
+        exit(1);
+    }
     free_cpu(cpu);
 }
 
@@ -26,7 +38,11 @@ void test_0xa9_lda_zero_flag()
     program[1] = 0x00;
     program[2] = 0x00;
     load_and_run(cpu, program, 3);
-    assert((cpu->reg_status & 0b00000010) == 0b10);
+    if((cpu->reg_status & 0b00000010) != 0b10)
+    {
+        fprintf(stderr, "0xa9_lda_zero_flag failure: zero flag not correct");
+        exit(1);
+    }
     free_cpu(cpu);
 }
 
@@ -38,7 +54,11 @@ void test_0xa9_lda_negative_flag()
     program[1] = 0xF0;
     program[2] = 0x00;
     load_and_run(cpu, program, 3);
-    assert((cpu->reg_status & 0b10000000) == 0b10000000);
+    if((cpu->reg_status & 0b10000000) != 0b10000000)
+    {
+        fprintf(stderr, "0xa9_lda_negative_flag failure: negative flag not correct");
+        exit(1);
+    }
     free_cpu(cpu);
 
 }
@@ -52,9 +72,21 @@ void test_0xaa_tax()
     program[2] = 0xaa;
     program[3] = 0x00;
     load_and_run(cpu, program, 4);
-    assert(cpu->reg_x == 17);
-    assert((cpu->reg_status & 0b00000010) == 0);
-    assert((cpu->reg_status & 0b10000000) == 0);
+    if(cpu->reg_x != 17)
+    {
+        fprintf(stderr, "0xaa_tax failure: reg_x not correct");
+        exit(1);
+    }
+    if((cpu->reg_status & 0b00000010) != 0)
+    {
+        fprintf(stderr, "0xaa_tax failure: zero flag not correct");
+        exit(1);
+    }
+    if((cpu->reg_status & 0b10000000) != 0)
+    {
+        fprintf(stderr, "0xaa_tax failure: negative flag not correct");
+        exit(1);
+    }
     free_cpu(cpu);
 }
 
@@ -68,9 +100,21 @@ void test_0xe8_inx()
     program[3] = 0xe8;
     program[4] = 0x00;
     load_and_run(cpu, program, 5);
-    assert(cpu->reg_x == 0x02);
-    assert((cpu->reg_status & 0b00000010) == 0);
-    assert((cpu->reg_status & 0b10000000) == 0);
+    if(cpu->reg_x != 0x02)
+    {
+        fprintf(stderr, "0xe8_inx failure: reg_x not correct");
+        exit(1);
+    }
+    if((cpu->reg_status & 0b00000010) != 0)
+    {
+        fprintf(stderr, "0xe8_inx failure: zero flag not correct");
+        exit(1);
+    }
+    if((cpu->reg_status & 0b10000000) != 0)
+    {
+        fprintf(stderr, "0xe8_inx failure: negative flag not correct");
+        exit(1);
+    }
     free_cpu(cpu);
 }
 
@@ -84,9 +128,21 @@ void test_0xe8_inx_nonzero()
     program[3] = 0xe8;
     program[4] = 0x00;
     load_and_run(cpu, program, 5);
-    assert(cpu->reg_x == 0x07);
-    assert((cpu->reg_status & 0b00000010) == 0);
-    assert((cpu->reg_status & 0b10000000) == 0);
+    if(cpu->reg_x != 0x07)
+    {
+        fprintf(stderr, "0xe8_inx_nonzero failure: reg_x not correct");
+        exit(1);
+    }
+    if((cpu->reg_status & 0b00000010) != 0)
+    {
+        fprintf(stderr, "0xe8_inx_nonzero failure: zero flag not correct");
+        exit(1);
+    }
+    if((cpu->reg_status & 0b10000000) != 0)
+    {
+        fprintf(stderr, "0xe8_inx_nonzero failure: negative flag not correct");
+        exit(1);
+    }
     free_cpu(cpu);
 
 }
@@ -101,7 +157,11 @@ void test_ops_together()
     program[3] = 0xe8;
     program[4] = 0x00;
     load_and_run(cpu, program, 5);
-    assert(cpu->reg_x == 0xc1);
+    if(cpu->reg_x != 0xc1)
+    {
+        fprintf(stderr, "ops_together failure: reg_x not correct");
+        exit(1);
+    }
     free_cpu(cpu);
 }
 
@@ -116,7 +176,11 @@ void test_overflow_inx()
     program[4] = 0xe8;
     program[5] = 0x00;
     load_and_run(cpu, program, 6);
-    assert(cpu->reg_x == 1);
+    if(cpu->reg_x != 1)
+    {
+        fprintf(stderr, "overflow_inx failure: reg_x not correct");
+        exit(1);
+    }
     free_cpu(cpu);
 }
 

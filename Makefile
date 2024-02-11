@@ -7,4 +7,4 @@ cpu.o: cpu.h cpu.c
 cpu_test.o: cpu.h cpu_test.c
 
 clean:
-	del -fR cpu_test.exe *.o
+	del /Q /F cpu_test.exe *.o
