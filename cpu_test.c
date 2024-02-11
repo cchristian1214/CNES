@@ -1,8 +1,8 @@
-#include "cpu.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
+#include "cpu.h"
 
 void test_0xa9_lda_immediate_load_data()
 {
@@ -14,7 +14,7 @@ void test_0xa9_lda_immediate_load_data()
     load_and_run(cpu, program, 3);
     if(cpu->reg_a != 0x05)
     {
-        fprintf(stderr, "0xa9_lda_immediate_load_data failure: reg_a not correct");
+        fprintf(stderr, "0xa9_lda_immediate_load_data failure: reg_a not correct: %d\n", cpu->reg_a);
         exit(1);
     }
     if((cpu->reg_status & 0b00000010) != 0)
