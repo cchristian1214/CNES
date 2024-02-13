@@ -4,6 +4,8 @@
 #include "cpu.h"
 #include "opcode.h"
 
+const uint16_t STACK_BASE = 0x0100;
+const uint8_t STACK_RESET = 0xfd;
 
 cpu_t* init_cpu()
 {
@@ -109,27 +111,68 @@ void load(cpu_t *cpu, int *program, int program_size)
 void set_flags(cpu_t *cpu, uint8_t result)
 {
     if(result == 0)
-        cpu->reg_status = cpu->reg_status | 0b00000010;
+        cpu->reg_status |= ZERO;
     else
-        cpu->reg_status = cpu->reg_status & 0b11111101;
+        cpu->reg_status &= ~ZERO;
     
     if((result & 0b10000000) != 0)
-        cpu->reg_status = cpu->reg_status | 0b10000000;
+        cpu->reg_status |= NEGATIVE;
     else
-        cpu->reg_status = cpu->reg_status & 0b01111111;
+        cpu->reg_status &= ~NEGATIVE;
+}
+
+void set_reg_a(cpu_t *cpu, uint8_t val)
+{
+    cpu->reg_a = val;
+    set_flags(cpu, cpu->reg_a);
+}
+
+void ldy(cpu_t *cpu, enum AddressingMode mode)
+{
+    uint16_t address = get_operand_address(cpu, mode);
+    cpu->reg_y = mem_read(cpu, address);
+    set_flags(cpu, cpu->reg_y);
+}
+
+void ldx(cpu_t *cpu, enum AddressingMode mode)
+{
+    uint16_t address = get_operand_address(cpu, mode);
+    cpu->reg_x = mem_read(cpu, address);
+    set_flags(cpu, cpu->reg_x);
 }
 
 void lda(cpu_t *cpu, enum AddressingMode mode)
 {
     uint16_t address = get_operand_address(cpu, mode);
-    cpu->reg_a = mem_read(cpu, address);
-    set_flags(cpu, cpu->reg_a);
+    uint8_t val = mem_read(cpu, address);
+    set_reg_a(cpu, val);
 }
 
 void sta(cpu_t *cpu, enum AddressingMode mode)
 {
     uint16_t address = get_operand_address(cpu, mode);
     mem_write(cpu, address, cpu->reg_a);
+}
+
+void and(cpu_t *cpu, enum AddressingMode mode)
+{
+    uint16_t address = get_operand_address(cpu, mode);
+    uint8_t val = mem_read(cpu, address);
+    set_reg_a(cpu, (cpu->reg_a & val));
+}
+
+void eor(cpu_t *cpu, enum AddressingMode mode)
+{
+    uint16_t address = get_operand_address(cpu, mode);
+    uint8_t val = mem_read(cpu, address);
+    set_reg_a(cpu, (cpu->reg_a ^ val));
+}
+
+void ora(cpu_t *cpu, enum AddressingMode mode)
+{
+    uint16_t address = get_operand_address(cpu, mode);
+    uint8_t val = mem_read(cpu, address);
+    set_reg_a(cpu, (cpu->reg_a | val));
 }
 
 void tax(cpu_t *cpu, enum AddressingMode mode)
@@ -142,6 +185,22 @@ void inx(cpu_t *cpu, enum AddressingMode mode)
 {
     cpu->reg_x = cpu->reg_x + 1;
     set_flags(cpu, cpu->reg_x);
+}
+
+void iny(cpu_t *cpu, enum AddressingMode mode)
+{
+    cpu->reg_y = cpu->reg_y + 1;
+    set_flags(cpu, cpu->reg_y);
+}
+
+void set_carry_flag(cpu_t *cpu)
+{
+    cpu->reg_status |= CARRY;
+}
+
+void clear_carry_flag(cpu_t *cpu)
+{
+    cpu->reg_status &= ~CARRY;
 }
 
 void run(cpu_t *cpu)
